@@ -1,0 +1,19 @@
+.profile__avatar-container {
+  box-sizing: border-box;
+  position: relative;
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  overflow: hidden;
+}
+
+.profile__avatar-container:hover {
+  cursor: pointer;
+}
+
+@media screen and (max-width: 680px) {
+  .profile__avatar-container {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
