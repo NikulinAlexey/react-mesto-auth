@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
 import {CurrentUserContext} from '../contexts/CurrentUserContext'
 
 // Импорт компонентов:
 import Main from './Main';
+import Login from './Login';
+import Register from './Register';
 import Header from './Header';
 import Footer from './Footer';
 import api  from '../utils/Api';
@@ -11,6 +14,7 @@ import ConfirmPopup from './ConfirmPopup';
 import AddPlacePopup from './AddPlacePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import EditProfilePopup from './EditProfilePopup';
+import InfoTooltip from './InfoTooltip';
 
 function App() {
   // Стейт переменные:
@@ -27,15 +31,22 @@ function App() {
 
   const [buttonTextConfirmPopup, setButtonTextConfirmPopup] = useState('Да');
   const [buttonTextSavePopup, setButtonTextSavePopup] = useState('Сохранить');
+
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(true);
   
 
   // Смена state попапов:
   function closeAllPopups() {
     setSelectedCard(null);
+    setIsInfoTooltipOpen(false);
     setIsDeletePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
+  }
+  function handleLoggedChange() {
+    setLoggedIn(!loggedIn);
   }
   function handleCardClick(card) {
     setSelectedCard(card);
@@ -171,22 +182,36 @@ function App() {
   
   return (
     <CurrentUserContext.Provider value={currentUser}>
+      <BrowserRouter>
+        <div className="page">
+          <Header />
 
-      <div className="page">
-        <Header />
-        <Main
-          cards={cards}
-          onCardLike={handleCardLike}
-          onCardClick={handleCardClick}
-          onAddPlace={handleAddPlaceClick}
-          isSpinnerVisible={isSpinnerVisible}
-          onEditAvatar={handleEditAvatarClick}
-          onEditProfile={handleEditProfileClick}
-          onCardDeleteClick={handleDeleteCardClick}
-          setIsDeletePopupOpen={setIsDeletePopupOpen}
-        />
-        <Footer />
-      </div>
+          <Routes>
+            <Route path='/' element={loggedIn ? 
+              <Main
+                cards={cards}
+                onCardLike={handleCardLike}
+                onCardClick={handleCardClick}
+                onAddPlace={handleAddPlaceClick}
+                isSpinnerVisible={isSpinnerVisible}
+                onEditAvatar={handleEditAvatarClick}
+                onEditProfile={handleEditProfileClick}
+                onCardDeleteClick={handleDeleteCardClick}
+                setIsDeletePopupOpen={setIsDeletePopupOpen}
+              /> : 
+              <Navigate
+                to='/sign-in'
+              />}
+            />
+
+            <Route path='/sign-in' element={<Login />} />
+
+            <Route path='/sign-up' element={<Register />} />
+          </Routes>
+
+          <Footer loggedIn={loggedIn} />
+        </div>
+      </BrowserRouter>
 
       <ImagePopup card={selectedCard} onClose={closeAllPopups} />
 
@@ -198,6 +223,7 @@ function App() {
       
       <ConfirmPopup isOpen={isDeletePopupOpen} onClose={closeAllPopups} onDelete={handleCardDelete} card={selectedCardToDelete} textOfButton={buttonTextConfirmPopup} />
 
+      <InfoTooltip isOpen={isInfoTooltipOpen} onClose={closeAllPopups} loggedIn={loggedIn}/>
     </CurrentUserContext.Provider>
   );
 }

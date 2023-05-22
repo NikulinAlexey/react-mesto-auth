@@ -1,0 +1,11 @@
+.intro-form {
+  width: 358px;
+  margin: 0 auto;
+  font-family: 'Inter';
+}
+
+@media screen and (max-width: 768px) {
+  .intro-form {
+    width: 260px;
+  }
+}

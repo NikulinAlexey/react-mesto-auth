@@ -1,10 +1,12 @@
 import React from 'react';
 
-function Footer() {
+function Footer({ loggedIn }) {
   return (
-    <footer className="footer">
-      <p className="footer__copyright">© 2023 Мой первый сайт на React</p>
-    </footer>
+    loggedIn ?
+      <footer className="footer">
+        <p className="footer__copyright">© 2023 Мой первый сайт на React</p>
+      </footer> :
+      <></>
   );
 }
 

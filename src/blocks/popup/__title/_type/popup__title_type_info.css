@@ -1,0 +1,14 @@
+.popup__title_type_info {
+  margin: 0 auto 60px auto;
+  max-width: 358px;
+  text-align: center;
+}
+
+@media screen and (max-width: 680px) {
+  .popup__title_type_info {
+    margin-bottom: 50px;
+    max-width: 244px;
+    font-size: 20px;
+    line-height: 24px;
+  }
+}
