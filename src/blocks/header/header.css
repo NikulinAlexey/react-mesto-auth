@@ -1,11 +1,14 @@
 .header {
+  position: relative;
   margin: 45px auto 40px auto;
   border-bottom: 1px solid rgba(84, 84, 84, .7);
   width: 100%;
+  display: flex;
+  justify-content: space-between;
 }
 
 @media screen and (max-width: 320px) {
   .header {
-    margin: 28px 0 40px 0;
+    margin: 28px 0 45px 0;
   }
 }
