@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 
 import { CurrentUserContext } from '../contexts/CurrentUserContext'
 
@@ -40,7 +40,6 @@ function App() {
 
   const navigate = useNavigate();
   const [loggedIn, setLoggedIn] = useState(false);
-  const [currentPath, setCurrentPath] = useState('');
 
   // Смена state-ов:
   function closeAllPopups() {
@@ -210,12 +209,12 @@ function App() {
           console.log(err)
         })
     }
-  }, [navigate]);
+  }, []);
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <Header loggedIn={loggedIn} userData={userData} onSignout={onSignout} currentPath={currentPath} />
+        <Header loggedIn={loggedIn} userData={userData} onSignout={onSignout}  />
 
         <Routes>
           <Route path="/" element={

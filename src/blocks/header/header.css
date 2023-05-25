@@ -1,14 +1,14 @@
 .header {
   position: relative;
-  margin: 45px auto 40px auto;
-  border-bottom: 1px solid rgba(84, 84, 84, .7);
+  margin: 0 auto 40px auto;
   width: 100%;
-  display: flex;
-  justify-content: space-between;
+  align-items: center;
+  transition: all .3s ease-in-out;
+  box-sizing: border-box;
 }
 
-@media screen and (max-width: 320px) {
+@media screen and (max-width: 768px) {
   .header {
-    margin: 28px 0 45px 0;
+    margin: 0 0 45px 0;
   }
 }

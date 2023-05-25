@@ -1,11 +1,10 @@
 .header__nav {
-  display: inline-block;
   margin: 0;
+  transition: all .3s ease-in-out;
 }
 
 @media screen and (max-width: 768px) {
   .header__nav {
-    position: absolute;
-    top: -200%;
+    display: none;
   }
 }

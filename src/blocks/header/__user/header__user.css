@@ -6,4 +6,15 @@
   line-height: 22px;
   color: #FFFFFF;
   margin-right: 24px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 768px) {
+  .header__user {
+    margin-right: 0;
+    margin-bottom: 18px;
+    text-align: center;
+  }
 }
