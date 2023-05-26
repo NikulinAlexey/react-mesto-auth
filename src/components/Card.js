@@ -1,7 +1,14 @@
 import { useContext } from 'react';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
-function Card({ card, onCardClick, onCardLike, setIsDeletePopupOpen, handleDelete }) {
+function Card({
+  card,
+  onCardLike,
+  onCardClick,
+  handleDelete,
+  setIsDeletePopupOpen
+}) {
+  
   const currentUser = useContext(CurrentUserContext);
   
   const isOwn = card.owner._id === currentUser._id; 
@@ -21,15 +28,29 @@ function Card({ card, onCardClick, onCardLike, setIsDeletePopupOpen, handleDelet
 
   return (
     <article className="element">
-      <img src={card.link} alt={card.name} className="element__image" onClick={handleClick} />
+
+      <img
+        src={card.link}
+        alt={card.name}
+        onClick={handleClick}
+        className="element__image"
+      />
+
       <div className="element__text">
-        <h2 className="element__title">{card.name}</h2>
+        <h2 className="element__title"> {card.name} </h2>
         <div className="element__like-container">
-          <button className={cardLikeButtonClassName} type="button" aria-label="Лайк" onClick={handleLikeClick}></button>
-          <div className="element__like-count">{card.likes.length}</div>
+          <button
+            type="button"
+            aria-label="Лайк"
+            onClick={handleLikeClick}
+            className={cardLikeButtonClassName}
+          />
+          <div className="element__like-count"> {card.likes.length} </div>
         </div>
       </div>
-      {isOwn && <button className="element__trash" onClick={handleConfirmPopup}></button>}
+      
+      {isOwn && <button className="element__trash" onClick={handleConfirmPopup} />}
+
     </article>
   );
 }

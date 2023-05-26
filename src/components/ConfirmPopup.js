@@ -1,6 +1,13 @@
 import PopupWithForm from "./PopupWithForm";
 
-function ConfirmPopup({ isOpen, onClose, onDelete, card, textOfButton }) {
+function ConfirmPopup({
+  isOpen,
+  onClose,
+  onDelete,
+  card,
+  textOfButton
+}) {
+  
   const isFormValid = true;
   
   function handleSubmit(e) {
@@ -8,7 +15,15 @@ function ConfirmPopup({ isOpen, onClose, onDelete, card, textOfButton }) {
     onDelete(card);
   }
   return (
-    <PopupWithForm name="delete" title="Вы уверены?" onClose={onClose} isOpen={isOpen} text={textOfButton} onSubmit={handleSubmit} isFormValid={isFormValid} />
+    <PopupWithForm
+      name="delete"
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Вы уверены?"
+      text={textOfButton}
+      onSubmit={handleSubmit}
+      isFormValid={isFormValid}
+    />
   )
 }
 

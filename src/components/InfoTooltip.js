@@ -1,11 +1,21 @@
 import errorImage from '../images/errorRegister-image.png';
 import successImage from '../images/successRegister-image.png';
 
-function InfoTooltip({ isOpen, onClose, isSuccessRegister }) {
+function InfoTooltip({
+  isOpen,
+  onClose,
+  isSuccessRegister
+}) {
+
   return (
     <div className={`popup popup_type_info ${isOpen ? 'popup_opened' : ''}`}>
       <div className="popup__container">
-        <button className="popup__close-icon" type="button" onClick={onClose}></button>
+        
+        <button
+          type="button"
+          onClick={onClose}
+          className="popup__close-icon"
+        />
         <img
           className="popup__image"
           src={isSuccessRegister ? successImage : errorImage}

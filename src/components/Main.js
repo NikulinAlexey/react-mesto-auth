@@ -1,34 +1,68 @@
-import {  useContext } from 'react';
+import { useContext } from 'react';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 import Card from './Card';
 import Spinner from './Spinner';
 
-function Main({ onEditProfile, onAddPlace, onEditAvatar, onCardClick, onCardLike, setIsDeletePopupOpen, cards, onCardDeleteClick, isSpinnerVisible }) {
+function Main({
+  cards,
+  onCardLike,
+  onAddPlace,
+  onCardClick,
+  onEditAvatar,
+  onEditProfile,
+  isSpinnerVisible,
+  onCardDeleteClick,
+  setIsDeletePopupOpen
+}) {
   const currentUser = useContext(CurrentUserContext);
-  
+
   return (
     <main className="content">
       <section className="profile">
         <div className="profile__avatar-container">
-          <div className="profile__avatar-mask" onClick={onEditAvatar}></div>
-          <img src={currentUser.avatar} alt="Аватар анкеты" className="profile__avatar" />
+          <div className="profile__avatar-mask" onClick={onEditAvatar}/>
+          <img
+            alt="Аватар анкеты"
+            src={currentUser.avatar}
+            className="profile__avatar"
+          />
         </div>
+
         <div className="profile__info">
           <div className="profile__main">
-            <h1 className="profile__name">{currentUser.name}</h1>
-            <button className="profile__edit-button" type="button" aria-label="Редактировать" onClick={onEditProfile}></button>
+            <h1 className="profile__name"> {currentUser.name} </h1>
+            <button
+              type="button"
+              onClick={onEditProfile}
+              aria-label="Редактировать"
+              className="profile__edit-button"
+            />
           </div>
-          <p className="profile__job">{currentUser.about}</p>
+          <p className="profile__job"> {currentUser.about} </p>
         </div>
-        <button className="profile__add-button" type="button" aria-label="Добавить" onClick={onAddPlace}></button>
+
+        <button
+          type="button"
+          onClick={onAddPlace}
+          aria-label="Добавить"
+          className="profile__add-button"
+        />
       </section>
 
       <section className="elements">
         <Spinner isSpinnerVisible={isSpinnerVisible} />
+
         {cards.map((card) => (
-          <Card key={card._id} card={card} onCardClick={onCardClick} onCardLike={onCardLike} handleDelete={onCardDeleteClick} setIsDeletePopupOpen={setIsDeletePopupOpen}/>
-          ))}
+          <Card
+            card={card}
+            key={card._id}
+            onCardLike={onCardLike}
+            onCardClick={onCardClick}
+            handleDelete={onCardDeleteClick}
+            setIsDeletePopupOpen={setIsDeletePopupOpen}
+          />
+        ))}
       </section>
     </main>
   );

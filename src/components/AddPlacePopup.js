@@ -1,8 +1,15 @@
-import PopupWithForm from "./PopupWithForm";
-import useFormWithValidation from "../hooks/useValidationForm";
 import { useEffect } from "react";
+import useFormWithValidation from "../hooks/useValidationForm";
 
-function AddPlacePopup({ isOpen, onClose, onAddPlace, textOfButton }) {
+import PopupWithForm from "./PopupWithForm";
+
+function AddPlacePopup({
+  isOpen,
+  onClose,
+  onAddPlace,
+  textOfButton
+}) {
+  
   const { values, handleChange, resetForm, isValid, errors } = useFormWithValidation();
 
   function handleSubmit(e) {
@@ -18,9 +25,16 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace, textOfButton }) {
     resetForm();
   }, [isOpen, resetForm]);
 
-
   return (
-    <PopupWithForm name="add" title="Новое место" onClose={onClose} isOpen={isOpen} text={textOfButton} onSubmit={handleSubmit} isFormValid={isValid}>
+    <PopupWithForm
+      name="add"
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Новое место"
+      text={textOfButton}
+      isFormValid={isValid}
+      onSubmit={handleSubmit}
+    >
       <input
         required
         type="text"
@@ -33,6 +47,7 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace, textOfButton }) {
         className={`popup__input popup__input_type_place ${errors.place === undefined || errors.place === '' ? '' : 'popup__input_type_error'}`}
       />
       <span id="place-input-error" className="popup__error">{errors?.place}</span>
+      
       <input
         required
         type="url"
@@ -45,6 +60,7 @@ function AddPlacePopup({ isOpen, onClose, onAddPlace, textOfButton }) {
         className={`popup__input popup__input_type_link ${errors.link === undefined || errors.link === '' ? '' : 'popup__input_type_error'}`}
       />
       <span id="link-input-error" className="popup__error">{errors?.link}</span>
+
     </PopupWithForm>
   )
 }

@@ -2,10 +2,15 @@ import { useContext, useEffect } from "react";
 import useFormWithValidation from "../hooks/useValidationForm";
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
-
 import PopupWithForm from "./PopupWithForm";
 
-function EditProfilePopup({ onClose, isOpen, onUpdateUser, textOfButton }) {
+function EditProfilePopup({
+  isOpen,
+  onClose,
+  onUpdateUser,
+  textOfButton,
+}) {
+
   const currentUser = useContext(CurrentUserContext);
   const { values, handleChange, resetForm, isValid, errors } = useFormWithValidation();
   
@@ -23,7 +28,16 @@ function EditProfilePopup({ onClose, isOpen, onUpdateUser, textOfButton }) {
   }, [currentUser, isOpen, resetForm]);
 
   return (
-    <PopupWithForm name="edit" title="Редактировать профиль" onClose={onClose} isOpen={isOpen} text={textOfButton} onSubmit={handleSubmit} isFormValid={isValid}>
+    <PopupWithForm
+      name="edit"
+      isOpen={isOpen}
+      onClose={onClose}
+      text={textOfButton}
+      isFormValid={isValid}
+      onSubmit={handleSubmit}
+      title="Редактировать профиль"
+    >
+
       <input
         required
         type="text"
@@ -53,6 +67,7 @@ function EditProfilePopup({ onClose, isOpen, onUpdateUser, textOfButton }) {
       <span id="job-input-error" className="popup__error">
         {errors?.job}
       </span>
+
     </PopupWithForm>
   )
 }

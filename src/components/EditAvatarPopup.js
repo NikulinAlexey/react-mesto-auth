@@ -1,8 +1,15 @@
 import { useEffect } from "react";
 import useFormWithValidation from "../hooks/useValidationForm";
+
 import PopupWithForm from "./PopupWithForm";
 
-function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, textOfButton }) {
+function EditAvatarPopup({
+  isOpen,
+  onClose,
+  textOfButton,
+  onUpdateAvatar,
+}) {
+
   const { values, handleChange, resetForm, isValid, errors } = useFormWithValidation();
 
   function handleSubmit(e) {
@@ -16,7 +23,16 @@ function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, textOfButton }) {
   }, [isOpen, resetForm]);
  
   return (
-    <PopupWithForm name="avatar" title="Обновить аватар" onClose={onClose} isOpen={isOpen} text={textOfButton} onSubmit={handleSubmit} isFormValid={isValid}>
+    <PopupWithForm
+      name="avatar"
+      isOpen={isOpen}
+      onClose={onClose}
+      text={textOfButton}
+      isFormValid={isValid}
+      onSubmit={handleSubmit}
+      title="Обновить аватар"
+    >
+      
       <input
         required
         type="url"
@@ -29,6 +45,7 @@ function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, textOfButton }) {
         className={`popup__input popup__input_type_avatar ${errors.avatar === undefined || errors.avatar === '' ? '' : 'popup__input_type_error'}`}
       />
       <span id="avatar-input-error" className="popup__error">{errors?.avatar}</span>
+
     </PopupWithForm>  
   )
 }

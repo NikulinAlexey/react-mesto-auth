@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 
 import { CurrentUserContext } from '../contexts/CurrentUserContext'
 
@@ -23,24 +23,24 @@ import ProtectedRouteElement from './ProtectedRouteElement';
 function App() {
   // Стейт переменные:
   const [cards, setCards] = useState([]);
-  const [currentUser, setCurrentUser] = useState({});                 // Для API редактирования пользователя и получения карточек
+  const [email, setEmail] = useState('email');
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [currentUser, setCurrentUser] = useState({});
   const [selectedCard, setSelectedCard] = useState(null);
-  const [email, setEmail] = useState('email');       // Для API авторизации
   const [selectedCardToDelete, setSelectedCardToDelete] = useState(null);
-
+  
+  const [buttonTextConfirmPopup, setButtonTextConfirmPopup] = useState('Да');
+  const [buttonTextSavePopup, setButtonTextSavePopup] = useState('Сохранить');
+  
   const [isSpinnerVisible, setIsSpinnerVisible] = useState(false);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [infoTooltip, setIsInfoTooltip] = useState({ isSuccessRegister: false, isOpen: false});
-
-  const [buttonTextConfirmPopup, setButtonTextConfirmPopup] = useState('Да');
-  const [buttonTextSavePopup, setButtonTextSavePopup] = useState('Сохранить');
-
+  
+  //
   const navigate = useNavigate();
-  const location = useLocation();
-  const [loggedIn, setLoggedIn] = useState(false);
 
   // Смена state-ов:
   function closeAllPopups() {
@@ -50,17 +50,6 @@ function App() {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsInfoTooltip({ ...infoTooltip, isOpen: false });
-  }
-  function onSignout() {
-    localStorage.clear('jwt');
-    setLoggedIn(false);
-  }
-  function onLogin(email, data) {
-    localStorage.setItem('jwt', data.token);
-    localStorage.setItem('email', email);
-
-    setEmail(localStorage.getItem('email'))
-    setLoggedIn(true);
   }
   function handleCardClick(card) {
     setSelectedCard(card);
@@ -81,7 +70,67 @@ function App() {
     setIsInfoTooltip({ isSuccessRegister, isOpen });
   }
 
-  // API запросы:
+  // Функции и API-запросы регистрации, авторизации:
+  useEffect(() => {
+    if (localStorage.getItem('jwt')) {
+      const jwt = localStorage.getItem('jwt')
+      auth.checkToken(jwt)
+        .then(({ email }) => {
+          if (email) {
+            setEmail(email);
+          }
+        })
+        .then(() => {
+          setLoggedIn(true);
+          navigate('/');
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    }
+  }, []);
+  useEffect(() => {
+    setEmail(localStorage.getItem('email'))
+  }, []);
+
+  function onSignout() {
+    localStorage.clear('jwt');
+    setLoggedIn(false);
+  }
+  function onLogin(email, data) {
+    localStorage.setItem('jwt', data.token);
+    localStorage.setItem('email', email);
+
+    setLoggedIn(true);
+  }
+  function handleRegister(password, email) {
+    auth.register(password, email)
+      .then(() => {
+        navigate('/sign-in');
+      })
+      .then(() => {
+        infoTooltipSetter(true, true);
+      })
+      .catch((err) => {
+        infoTooltipSetter(true, false);
+      })
+  }
+  function handleAuthorize(password, email) {
+    auth.authorize(password, email)
+      .then(data => {
+        if (data.token) {
+          onLogin(email, data)
+        }
+      })
+      .then(() => {
+        navigate('/');
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }
+
+  // API-запросы карточек и пользователя:
   function handleCardLike(card) {
     // Снова проверяем, есть ли уже лайк на этой карточке
     const isLiked = card.likes.some(i => i._id === currentUser._id);
@@ -196,31 +245,15 @@ function App() {
 
       })
   }, []);
-  useEffect(() => {
-    if (localStorage.getItem('jwt')) {
-      const jwt = localStorage.getItem('jwt')
-      auth.checkToken(jwt)
-        .then(({ email }) => {
-          if (email) {
-            console.log(email)
-            setEmail(email);
-            console.log(email);
-          }
-        })
-        .then(() => {
-          setLoggedIn(true);
-          navigate('/');
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    }
-  }, []);
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <Header loggedIn={loggedIn} email={localStorage.getItem('email')} onSignout={onSignout}  />
+        <Header
+          email={email}
+          loggedIn={loggedIn}
+          onSignout={onSignout}
+        />
 
         <Routes>
           <Route path="/" element={
@@ -239,11 +272,11 @@ function App() {
             />}
           />
 
-          <Route path='/sign-up' element={<Register infoTooltipSetter={infoTooltipSetter} />} />
-
-          <Route path='/sign-in' element={<Login onLogin={onLogin}/>} />
-
           <Route path='*' element={<PageNotFound loggedIn={loggedIn} />} />
+
+          <Route path='/sign-in' element={<Login handleAuthorize={handleAuthorize} />} />
+
+          <Route path='/sign-up' element={<Register handleRegister={handleRegister} />} />
         </Routes>
 
         <Footer loggedIn={loggedIn} />
