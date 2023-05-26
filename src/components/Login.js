@@ -27,11 +27,8 @@ function Login({ onLogin }) {
     auth.authorize(password, email)
       .then(data => {
         if (data.token) {
-          localStorage.setItem('jwt', data.token);
+          onLogin(email, data)
         }
-      })
-      .then(() => {
-        onLogin(email);
       })
       .then(() => {
         navigate('/');

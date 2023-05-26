@@ -13,6 +13,9 @@
 @import url(./blocks/header/__burger/header__burger.css);
 @import url(./blocks/header/__button/header__button.css);
 @import url(./blocks/header/__nav/_type/header__nav_type_mobile.css);
+@import url(./blocks/header/__list/_type/header__list_type_mobile.css);
+@import url(./blocks/header/__user/_type/header__user_type_mobile.css);
+@import url(./blocks/header/__button/_type/header__button_type_mobile.css);
 
 @import url(./blocks/profile/profile.css);
 @import url(./blocks/profile/__job/profile__job.css);

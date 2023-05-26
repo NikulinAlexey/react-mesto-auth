@@ -25,39 +25,41 @@ function App() {
   const [cards, setCards] = useState([]);
   const [currentUser, setCurrentUser] = useState({});                 // Для API редактирования пользователя и получения карточек
   const [selectedCard, setSelectedCard] = useState(null);
-  const [userData, setUserData] = useState({ email: 'email' });       // Для API авторизации
+  const [email, setEmail] = useState('email');       // Для API авторизации
   const [selectedCardToDelete, setSelectedCardToDelete] = useState(null);
 
   const [isSpinnerVisible, setIsSpinnerVisible] = useState(false);
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
-  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
+  const [infoTooltip, setIsInfoTooltip] = useState({ isSuccessRegister: false, isOpen: false});
 
   const [buttonTextConfirmPopup, setButtonTextConfirmPopup] = useState('Да');
   const [buttonTextSavePopup, setButtonTextSavePopup] = useState('Сохранить');
 
   const navigate = useNavigate();
+  const location = useLocation();
   const [loggedIn, setLoggedIn] = useState(false);
 
   // Смена state-ов:
   function closeAllPopups() {
     setSelectedCard(null);
-    setIsInfoTooltipOpen(false);
     setIsDeletePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
+    setIsInfoTooltip({ ...infoTooltip, isOpen: false });
   }
   function onSignout() {
     localStorage.clear('jwt');
     setLoggedIn(false);
   }
-  function onLogin(email) {
-    setUserData({
-      email: email
-    });
+  function onLogin(email, data) {
+    localStorage.setItem('jwt', data.token);
+    localStorage.setItem('email', email);
+
+    setEmail(localStorage.getItem('email'))
     setLoggedIn(true);
   }
   function handleCardClick(card) {
@@ -74,6 +76,9 @@ function App() {
   }
   function handleDeleteCardClick(card) {
     setSelectedCardToDelete(card)
+  }
+  function infoTooltipSetter(isOpen, isSuccessRegister) {
+    setIsInfoTooltip({ isSuccessRegister, isOpen });
   }
 
   // API запросы:
@@ -197,8 +202,9 @@ function App() {
       auth.checkToken(jwt)
         .then(({ email }) => {
           if (email) {
-            setUserData({email})
             console.log(email)
+            setEmail(email);
+            console.log(email);
           }
         })
         .then(() => {
@@ -214,7 +220,7 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <Header loggedIn={loggedIn} userData={userData} onSignout={onSignout}  />
+        <Header loggedIn={loggedIn} email={localStorage.getItem('email')} onSignout={onSignout}  />
 
         <Routes>
           <Route path="/" element={
@@ -233,11 +239,11 @@ function App() {
             />}
           />
 
-          <Route path='/sign-up' element={<Register />} />
+          <Route path='/sign-up' element={<Register infoTooltipSetter={infoTooltipSetter} />} />
 
-          <Route path='/sign-in' element={<Login onLogin={onLogin} />} />
+          <Route path='/sign-in' element={<Login onLogin={onLogin}/>} />
 
-          <Route path='*' element={<PageNotFound />} />
+          <Route path='*' element={<PageNotFound loggedIn={loggedIn} />} />
         </Routes>
 
         <Footer loggedIn={loggedIn} />
@@ -278,9 +284,9 @@ function App() {
       />
 
       <InfoTooltip
-        loggedIn={loggedIn}
         onClose={closeAllPopups}
-        isOpen={isInfoTooltipOpen}
+        isOpen={infoTooltip.isOpen}
+        isSuccessRegister={infoTooltip.isSuccessRegister}
       />
     </CurrentUserContext.Provider>
   );

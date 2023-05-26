@@ -1,4 +1,4 @@
-.header__button {
+.header__button_type_mobile {
   text-decoration: none;
   font-family: 'Inter';
   font-style: normal;
@@ -10,14 +10,6 @@
   transition: opacity .3s ease-in-out;
 }
 
-.header__button:hover {
+.header__button_type_mobile:hover {
   opacity: .6;
-}
-
-@media screen and (max-width: 768px) {
-  .header__button {
-    display: none;
-    font-size: 14px;
-    line-height: 17px;
-  }
 }

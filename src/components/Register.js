@@ -2,7 +2,7 @@ import { Link, useNavigate} from 'react-router-dom';
 import { useState } from 'react';
 import  * as auth from '../auth';
 
-function Register() {
+function Register({ infoTooltipSetter }) {
   const navigate = useNavigate();
   const [formValue, setFormValue] = useState({
     password: '',
@@ -27,8 +27,11 @@ function Register() {
       .then(() => {
         navigate('/sign-in');
       })
+      .then(() => {
+        infoTooltipSetter(true, true);
+      })
       .catch((err) => {
-        console.log(err)
+        infoTooltipSetter(true, false);
       })
   }
 

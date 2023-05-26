@@ -10,7 +10,6 @@
     width: 24px;
     height: 24px;
     border: none;
-    z-index: 3;
     opacity: 1;
     transition: opacity .3s ease-in-out;
   }

@@ -1,15 +1,12 @@
-import { useState} from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect} from 'react';
+import { Link, useLocation } from 'react-router-dom';
+
 import logo from '../images/header__logo.svg';
 
-function Header({ loggedIn, userData, onSignout }) {
-  const { email } = userData;
+function Header({ loggedIn, email, onSignout }) {
+  const currentLocation = useLocation();
   const [isBurgerClicked, setIsBurgerClicked] = useState(false);
-
-  // не придумал как реализовать плавное открывания меню на мобилке
-  const activeNavStyle = {
-    display: 'flex',
-  }
+  const [buttonInfo, setButtonInfo] = useState({path: '', textOfButton: ''});
 
   function handleSignOut() {
     setIsBurgerClicked(false);
@@ -20,15 +17,24 @@ function Header({ loggedIn, userData, onSignout }) {
     setIsBurgerClicked(!isBurgerClicked);
   };
 
+  useEffect(() => {
+    if (currentLocation.pathname === '/sign-in') {
+      setButtonInfo({ path: 'sign-up', textOfButton: 'Зарегистрироваться' });
+    }
+    else if (currentLocation.pathname === '/sign-up') {
+      setButtonInfo({ path: 'sign-in', textOfButton: 'Войти' });
+    }
+  }, [currentLocation.pathname]);
+
   return (
     <header className="header">
-      <nav className='header__nav_type_mobile' style={ isBurgerClicked ? activeNavStyle : {}}>
-        <ul className='header__list'>
-          <li className='header__user'>{loggedIn ? email : ''}</li>
+      <nav className={`header__nav_type_mobile ${isBurgerClicked ? 'active' : ''}`}>
+        <ul className='header__list_type_mobile'>
+          <li className='header__user_type_mobile'>{loggedIn ? email : ''}</li>
           <li>
             <Link
               to='/'
-              className='header__button'
+              className='header__button_type_mobile'
               onClick={handleSignOut}>
               {loggedIn ? 'Выйти' : ''}
             </Link>
@@ -45,10 +51,11 @@ function Header({ loggedIn, userData, onSignout }) {
             <li className='header__user'>{loggedIn ? email : ''}</li>
             <li>
               <Link
-                to='/'
+                to={loggedIn === false ? buttonInfo.path : '/'}
                 className='header__button'
+                style={loggedIn ? {} : {display: 'block'}}
                 onClick={onSignout}>
-                {loggedIn ? 'Выйти' : ''}
+                {loggedIn === false ? buttonInfo.textOfButton  : 'Выйти'}
               </Link>
             </li>
           </ul>
