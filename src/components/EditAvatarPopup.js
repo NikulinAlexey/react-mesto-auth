@@ -38,9 +38,9 @@ function EditAvatarPopup({
         type="url"
         name="avatar"
         minLength="2"
-        value={values.avatar || ''}
-        onChange={handleChange}
         id="avatar-input"
+        onChange={handleChange}
+        value={values.avatar || ''}
         placeholder="Ссылка на картинку"
         className={`popup__input popup__input_type_avatar ${errors.avatar === undefined || errors.avatar === '' ? '' : 'popup__input_type_error'}`}
       />
