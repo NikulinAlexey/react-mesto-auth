@@ -21,6 +21,9 @@ import EditProfilePopup from './EditProfilePopup';
 import ProtectedRouteElement from './ProtectedRouteElement';
 
 function App() {
+  // Спасибо за дополнительные возможности улучшить код, а именно про общий компенент для всех попапов,
+  // я его сделаю самостоятельно, но сейчас боюсь не успеть до дедлайна(28 мая).
+
   // Стейт переменные:
   const [cards, setCards] = useState([]);
   const [email, setEmail] = useState('email');
