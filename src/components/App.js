@@ -8,8 +8,10 @@ import Main from './Main';
 import Login from './Login';
 import Header from './Header';
 import Footer from './Footer';
-import api from '../utils/Api';
+
 import * as auth from '../auth';
+import * as api from '../utils/Api';
+
 import Register from './Register';
 import ImagePopup from './ImagePopup';
 import InfoTooltip from './InfoTooltip';
@@ -21,12 +23,8 @@ import EditProfilePopup from './EditProfilePopup';
 import ProtectedRouteElement from './ProtectedRouteElement';
 
 function App() {
-  // Михаил, спасибо большое  за дополнительные предложения улучшить код, а именно про общий компенент для всех попапов,
-  // я его сделаю самостоятельно, но сейчас боюсь не успеть до дедлайна(28 мая).
-
   // Стейт переменные:
   const [cards, setCards] = useState([]);
-  const [email, setEmail] = useState('email');
   const [loggedIn, setLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
   const [selectedCard, setSelectedCard] = useState(null);
@@ -75,36 +73,22 @@ function App() {
 
   // Функции и API-запросы регистрации, авторизации:
   useEffect(() => {
-    if (localStorage.getItem('jwt')) {
-      const jwt = localStorage.getItem('jwt')
-      auth.checkToken(jwt)
-        .then(({ email }) => {
-          if (email) {
-            setEmail(email);
-          }
-        })
-        .then(() => {
-          setLoggedIn(true);
-          navigate('/');
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    }
-  }, []);
-  useEffect(() => {
-    setEmail(localStorage.getItem('email'))
+    auth.checkToken()
+      .then((user) => {
+        setCurrentUser(user);
+        setLoggedIn(true);
+      })
+      .then(() => {
+        navigate('/');
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function onSignout() {
-    localStorage.clear('jwt');
     setLoggedIn(false);
-  }
-  function onLogin(email, data) {
-    localStorage.setItem('jwt', data.token);
-    localStorage.setItem('email', email);
-
-    setLoggedIn(true);
   }
   function handleRegister(password, email) {
     auth.register(password, email)
@@ -120,10 +104,9 @@ function App() {
   }
   function handleAuthorize(password, email) {
     auth.authorize(password, email)
-      .then(data => {
-        if (data.token) {
-          onLogin(email, data)
-        }
+      .then((user) => {
+        setCurrentUser(user);
+        setLoggedIn(true);
       })
       .then(() => {
         navigate('/');
@@ -136,7 +119,7 @@ function App() {
   // API-запросы карточек и пользователя:
   function handleCardLike(card) {
     // Снова проверяем, есть ли уже лайк на этой карточке
-    const isLiked = card.likes.some(i => i._id === currentUser._id);
+    const isLiked = card.likes.some(likeId => likeId === currentUser._id);
 
     // Отправляем запрос в API и получаем обновлённые данные карточки
     api.changeLikeCardStatus(card._id, isLiked)
@@ -170,9 +153,9 @@ function App() {
   function handleUpdateUser(userData) {
     setButtonTextSavePopup('Сохранение...')
 
-    api.editProfileInfo(userData)
-      .then((res) => {
-        setCurrentUser(res)
+    api.updateProfile(userData)
+      .then((refreshedUser) => {
+        setCurrentUser(refreshedUser)
       })
       .then(() => {
         closeAllPopups()
@@ -187,9 +170,9 @@ function App() {
   function handleAddPlaceSubmit(cardData) {
     setButtonTextSavePopup('Сохранение...')
 
-    api.addNewCard(cardData)
-      .then((newCard) => {
-        setCards([newCard, ...cards])
+    api.createCard(cardData)
+      .then((postedCard) => {
+        setCards([postedCard, ...cards])
       })
       .then(() => {
         closeAllPopups()
@@ -204,13 +187,9 @@ function App() {
   function handleUpdateAvatar(avatarInputValue) {
     setButtonTextSavePopup('Сохранение...');
 
-    api.changeAvatar(avatarInputValue)
-      .then(() => {
-        setCurrentUser({
-          avatar: avatarInputValue,
-          name: currentUser.name,
-          about: currentUser.about,
-        })
+    api.updateAvatar(avatarInputValue)
+      .then((updatedUser) => {
+        setCurrentUser(updatedUser)
       })
       .then(() => {
         closeAllPopups()
@@ -225,9 +204,9 @@ function App() {
   useEffect(() => {
     setIsSpinnerVisible(true);
 
-    api.getInitialCards()
-      .then((res) => {
-        setCards(res)
+    api.getCards()
+      .then((cards) => {
+        setCards(cards.reverse())
       })
       .catch((err) => {
         console.log(err)
@@ -236,24 +215,12 @@ function App() {
         setIsSpinnerVisible(false)
       })
   }, []);
-  useEffect(() => {
-    api.getProfileInfo()
-      .then((userInfo) => {
-        setCurrentUser(userInfo)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-      .finally(() => {
-
-      })
-  }, []);
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <Header
-          email={email}
+          email={currentUser.email}
           loggedIn={loggedIn}
           onSignout={onSignout}
         />

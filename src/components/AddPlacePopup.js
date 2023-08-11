@@ -17,7 +17,7 @@ function AddPlacePopup({
 
     onAddPlace({
       link: values.link,
-      place: values.place
+      name: values.place
     });
   }
 

@@ -1,114 +1,85 @@
-class Api {
-  constructor({ baseUrl, headers }) {
-    this._baseUrl = baseUrl;
-    this._headers = headers;
-  }
+// const BASE_URL = 'http://localhost:3001';
+const BASE_URL = 'http://alekseyNikulin - back15.nomoreparties.co';
 
-  _checkResponse = (res) => {
-    if(res.ok) {
-      return res.json()
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-
+const headers = {
+  'Content-Type': 'application/json',
 }
-  getProfileInfo() {
-    return fetch(`${this._baseUrl}/users/me`, {
-      headers: this._headers
-    })
-      .then(this._checkResponse)
-  }
+const credentials = 'include';
+const checkResponse = (res) => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);
 
+export function getCards() {
+  return fetch(`${BASE_URL}/cards`, {
+    method: 'GET',
+    headers,
+    credentials,
+  })
+    .then(checkResponse)
+}
 
-  getInitialCards() {
-    return fetch(`${this._baseUrl}/cards`, {
-      headers: this._headers
-    })
-      .then(this._checkResponse)
-  }
+export function createCard(cardData) {
+  return fetch(`${BASE_URL}/cards`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(cardData),
+    credentials,
+  })
+    .then(checkResponse)
+}
 
-  editProfileInfo(userData) {
-    return fetch(`${this._baseUrl}/users/me`, {
-      method: 'PATCH',
-      headers: this._headers,
-      body: JSON.stringify({
-        name: `${userData.name}`,
-        about: `${userData.about}`
-      })
-    })
-      .then(this._checkResponse)
-  }
+export function deleteCard(cardId) {
+  return fetch(`${BASE_URL}/cards/${cardId}`, {
+    method: 'DELETE',
+    headers,
+    credentials,
+  })
+    .then(checkResponse)
+}
 
-  addNewCard(cardData) {
-    return fetch(`${this._baseUrl}/cards`, {
-      method: 'POST',
-      headers: this._headers,
-      body: JSON.stringify({
-        name: `${cardData.place}`,
-        link: `${cardData.link}`
-      })
-    })
-      .then(this._checkResponse)
-  }
+export function addLikeToCard(cardId) {
+  return fetch(`${BASE_URL}/cards/${cardId}/likes`, {
+    method: 'PUT',
+    headers,
+    credentials,
+  })
+    .then(checkResponse)
+}
 
-  deleteCard(id) {
-    return fetch(`${this._baseUrl}/cards/${id}`, {
-      method: 'DELETE',
-      headers: {
-        authorization: '380de586-8df7-40d5-9ea1-f2891fd44b6d',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        likes: [],
-        _id: `${id}`,
-      })
-    })
-      .then(this._checkResponse)
-  }
-
-  addLike(id) {
-    return fetch(`${this._baseUrl}/cards/${id}/likes`, {
-      method: 'PUT',
-      headers: this._headers,
-      body: JSON.stringify({
-        likes: [],
-        _id: `${id}`,
-      })
-    })
-      .then(this._checkResponse)
-  }
-
-  removeLike(id) {
-    return fetch(`${this._baseUrl}/cards/${id}/likes`, {
-      method: 'DELETE',
-      headers: this._headers,
-      body: JSON.stringify({
-        likes: [],
-        _id: `${id}`,
-      })
-    })
-      .then(this._checkResponse)
-  }
-  changeLikeCardStatus(id, isLiked) {
-    return (
-      isLiked ? (
-        this.removeLike(id)
-      ) : (
-        this.addLike(id)
-        )
+export function removeLikeFromCard(cardId) {
+  return fetch(`${BASE_URL}/cards/${cardId}/likes`, {
+    method: 'DELETE',
+    headers,
+    credentials,
+  })
+    .then(checkResponse)
+}
+export function changeLikeCardStatus(cardId, isLiked) {
+  return (
+    isLiked ? (
+      removeLikeFromCard(cardId)
+    ) : (
+      addLikeToCard(cardId)
     )
-  }
-
-  changeAvatar(inputValue) {
-    return fetch(`${this._baseUrl}/users/me/avatar`, {
-      method: 'PATCH',
-      headers: this._headers,
-      body: JSON.stringify({
-        avatar: `${inputValue}`,
-      })
-    })
-      .then(this._checkResponse)
-  }
+  )
 }
 
-const api = new Api({ baseUrl: 'https://mesto.nomoreparties.co/v1/cohort-62', headers: { authorization: '380de586-8df7-40d5-9ea1-f2891fd44b6d', 'Content-Type': 'application/json' } });
-export default api;
+export function updateProfile(userData) {
+  return fetch(`${BASE_URL}/users/me`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify(userData),
+    credentials,
+  })
+    .then(checkResponse)
+}
+
+export function updateAvatar(inputValue) {
+  return fetch(`${BASE_URL}/users/me/avatar`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify({
+      avatar: `${inputValue}`,
+    }),
+    credentials,
+  })
+    .then(checkResponse)
+}
