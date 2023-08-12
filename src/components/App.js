@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 
 import { CurrentUserContext } from '../contexts/CurrentUserContext'
 
@@ -23,7 +23,8 @@ import EditProfilePopup from './EditProfilePopup';
 import ProtectedRouteElement from './ProtectedRouteElement';
 
 function App() {
-  // Стейт переменные:
+  const navigate = useNavigate();
+ 
   const [cards, setCards] = useState([]);
   const [loggedIn, setLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState({});
@@ -39,9 +40,6 @@ function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [infoTooltip, setIsInfoTooltip] = useState({ isSuccessRegister: false, isOpen: false});
-  
-  //
-  const navigate = useNavigate();
 
   // Смена state-ов:
   function closeAllPopups() {
@@ -75,8 +73,8 @@ function App() {
   useEffect(() => {
     auth.checkToken()
       .then((user) => {
-        setCurrentUser(user);
         setLoggedIn(true);
+        setCurrentUser(user);
       })
       .then(() => {
         navigate('/');
@@ -86,6 +84,22 @@ function App() {
       })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    setIsSpinnerVisible(true);
+
+    api.getCards()
+      .then((cards) => {
+        setCards(cards.reverse())
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+      .finally(() => {
+        setIsSpinnerVisible(false)
+      })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[loggedIn])
 
   function onSignout() {
     setLoggedIn(false);
@@ -112,7 +126,7 @@ function App() {
         navigate('/');
       })
       .catch((err) => {
-        console.log(err)
+        console.log(err.message)
       })
   }
 
@@ -201,20 +215,6 @@ function App() {
         setButtonTextSavePopup('Сохранить')
       })
   }
-  useEffect(() => {
-    setIsSpinnerVisible(true);
-
-    api.getCards()
-      .then((cards) => {
-        setCards(cards.reverse())
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-      .finally(() => {
-        setIsSpinnerVisible(false)
-      })
-  }, []);
 
   return (
     <CurrentUserContext.Provider value={currentUser}>

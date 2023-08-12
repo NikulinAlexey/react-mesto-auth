@@ -1,11 +1,10 @@
-// const BASE_URL = 'http://localhost:3001';
-const BASE_URL = 'http://alekseyNikulin - back15.nomoreparties.co';
-
-const headers = {
+export const BASE_URL = 'https://alekseynikulin-back15.nomoreparties.co';
+// export const BASE_URL = 'http://localhost:3001';
+export const headers = {
   'Content-Type': 'application/json',
-}
-const credentials = 'include';
-const checkResponse = (res) => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);
+};
+export const credentials = 'include';
+export const checkResponse = (res) => res.ok ? res.json() : Promise.reject(`Ошибка: ${res.status}`);
 
 export function getCards() {
   return fetch(`${BASE_URL}/cards`, {
